@@ -4,6 +4,7 @@ import socket
 import urllib.parse
 import sys
 
+
 def check_security_headers(url):
     """
     Checks for common security headers in the HTTP response.
@@ -12,7 +13,7 @@ def check_security_headers(url):
     try:
         response = requests.get(url, timeout=5)
         headers = response.headers
-        
+
         # Define headers to check
         security_headers = {
             "Content-Security-Policy": {
@@ -35,14 +36,17 @@ def check_security_headers(url):
 
         for header, info in security_headers.items():
             if header in headers:
-                results.append(f"{header} -> Rank(10) -> Action: Nothing to do -> To do: It keep. It's already max security.")
+                results.append(
+                    f"{header} -> Rank(10) -> Action: Nothing to do -> To do: It keep. It's already max security.")
             else:
-                results.append(f"{header} -> Rank(0) -> Action: Immediate action required -> To do: {info['fix']}")
-                
+                results.append(
+                    f"{header} -> Rank(0) -> Action: Immediate action required -> To do: {info['fix']}")
+
     except Exception as e:
         results.append(f"Header Check Failed: {str(e)}")
-    
+
     return results
+
 
 def check_ssl(url):
     """
@@ -50,7 +54,7 @@ def check_ssl(url):
     """
     parsed_url = urllib.parse.urlparse(url)
     hostname = parsed_url.hostname
-    
+
     if not hostname:
         return "SSL Check -> Rank(0) -> Action: Invalid URL -> To do: Please provide a valid URL."
 
@@ -64,28 +68,31 @@ def check_ssl(url):
     except Exception as e:
         return f"SSL Connection -> Rank(0) -> Action: Immediate action required -> To do: Install or fix your SSL certificate. ({str(e)})"
 
+
 def main():
     print("--- ညီမလေးရဲ့ Educational Security Checker ---")
-    
+
     if len(sys.argv) > 1:
         target = sys.argv[1]
     else:
-        target = input("စမ်းသပ်ချင်တဲ့ URL ကို ရိုက်ထည့်ပေးပါ (e.g., https://google.com): ")
-    
+        target = input(
+            "စမ်းသပ်ချင်တဲ့ URL ကို ရိုက်ထည့်ပေးပါ (e.g., https://google.com): ")
+
     if not target.startswith("http"):
         print("Error: URL must start with http:// or https://")
         return
 
     print(f"\nScanning: {target}...\n")
-    
+
     print("1. Security Headers Analysis:")
     header_results = check_security_headers(target)
     for res in header_results:
         print(f" - {res}")
-        
+
     print("\n2. SSL/TLS Status:")
     ssl_result = check_ssl(target)
     print(f" - {ssl_result}")
+
 
 if __name__ == "__main__":
     main()
